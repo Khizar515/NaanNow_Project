@@ -35,7 +35,8 @@ router.post('/wishlist/:restaurantId', protect, authorize('customer'), async (re
             req.flash('success_msg', `"${shop.name}" added to wishlist!`);
         }
 
-        res.redirect('back');
+        const referer = req.get('Referer') || '/restaurants';
+        res.redirect(referer);
     } catch (error) {
         console.error(error);
         req.flash('error_msg', 'Server error updating wishlist.');

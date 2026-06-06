@@ -12,28 +12,28 @@
         <form action="/wallet/add-card" method="POST">
             <div class="form-group">
                 <label for="cardHolderName" class="form-label">Card Holder Name</label>
-                <input type="text" id="cardHolderName" name="cardHolderName" class="form-control" placeholder="Name on card" required>
+                <input type="text" id="cardHolderName" name="cardHolderName" class="form-control" required>
             </div>
 
             <div class="form-group">
                 <label for="cardNumber" class="form-label">Card Number</label>
-                <input type="text" id="cardNumber" name="cardNumber" class="form-control" placeholder="1234 5678 9101 1121" required>
+                <input type="text" id="cardNumber" name="cardNumber" class="form-control" required>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="expiryDate" class="form-label">Expiry Date</label>
-                    <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY" required>
+                    <input type="text" id="expiryDate" name="expiryDate" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label for="cvv" class="form-label">CVV</label>
-                    <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123" required maxlength="4">
+                    <input type="text" id="cvv" name="cvv" class="form-control" required maxlength="4">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="pin" class="form-label">Security PIN</label>
-                <input type="password" id="pin" name="pin" class="form-control" placeholder="Create a 4-6 digit PIN" required minlength="4" maxlength="6">
+                <input type="password" id="pin" name="pin" class="form-control" required minlength="4" maxlength="6">
                 <span class="form-text">This PIN will be required during checkout.</span>
             </div>
 

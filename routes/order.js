@@ -299,7 +299,8 @@ router.post('/:id/status', protect, authorize('restaurant_owner', 'rider'), asyn
         const order = await Order.findById(req.params.id);
         if (!order) {
             req.flash('error_msg', 'Order not found.');
-            return res.redirect('back');
+            const referer = req.get('Referer') || '/';
+            return res.redirect(referer);
         }
 
         // If Rider is accepting the order
@@ -489,7 +490,8 @@ router.get('/:id/chat', protect, authorize('customer', 'rider'), async (req, res
         // Must have a rider assigned
         if (!order.riderId) {
             req.flash('error_msg', 'Waiting for a rider to accept the order first.');
-            return res.redirect('back');
+            const referer = req.get('Referer') || '/orders/my-orders';
+            return res.redirect(referer);
         }
 
         // Security: only the assigned customer or rider can access this chat

@@ -15,7 +15,8 @@ router.post('/add', protect, authorize('customer'), async (req, res) => {
         const item = await MenuItem.findById(menuItemId);
         if (!item || !item.isAvailable) {
             req.flash('error_msg', 'Item unavailable.');
-            return res.redirect('back');
+            const referer = req.get('Referer') || '/restaurants';
+            return res.redirect(referer);
         }
 
         // 2. Find the user's cart (or create a new one)
