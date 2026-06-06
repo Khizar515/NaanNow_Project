@@ -1,0 +1,117 @@
+<% layout('layouts/main') %>
+
+<div class="container">
+    <div class="page-header d-flex justify-between align-center">
+        <div>
+            <h1>Track Order</h1>
+            <p>Status: <span class="badge badge-info"><%= order.status %></span></p>
+        </div>
+        <a href="/orders/my-orders" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back to Orders</a>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h3 class="card-title">Delivery Details</h3>
+            
+            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); padding-bottom: var(--space-md); border-bottom: 1px solid var(--color-border);">
+                <img src="<%= order.riderId.profilePic || '/uploads/defaults/profile-avatar.png' %>" alt="Rider Avatar" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <h4 style="margin:0;"><%= order.riderId.name %></h4>
+                    <p class="text-muted" style="margin:0; font-size: var(--font-size-sm);">Your Delivery Rider</p>
+                </div>
+            </div>
+
+            <div class="d-flex gap-sm mb-md">
+                <a href="/orders/<%= order._id %>/chat" class="btn btn-primary" style="flex:1; text-align: center;">
+                    <i class="fas fa-comment-dots"></i> Chat
+                </a>
+                <a href="tel:<%= order.riderId.phone %>" class="btn btn-success" style="flex:1; text-align: center;">
+                    <i class="fas fa-phone-alt"></i> Call
+                </a>
+            </div>
+
+            <p><strong>Restaurant:</strong> <%= order.restaurantId.name %></p>
+            <p><strong>Delivery Address:</strong> <%= order.deliveryAddress %></p>
+            
+            <hr style="margin: var(--space-md) 0;">
+            
+            <h4>Order Summary</h4>
+            <ul style="list-style: none; padding: 0;">
+                <% order.items.forEach(item => { %>
+                    <li style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                        <span><%= item.quantity %>x <%= item.name %></span>
+                        <span>Rs. <%= item.unitDisplayPrice * item.quantity %></span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Live Tracking</h3>
+            <div id="map" style="height: 400px; width: 100%; border-radius: var(--radius-sm); z-index: 1;"></div>
+            <p id="trackingStatus" class="text-muted mt-sm" style="font-size: var(--font-size-sm); text-align: center;">
+                <i class="fas fa-spinner fa-spin"></i> Waiting for rider GPS signal...
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const destLat = <%= order.deliveryCoordinates[1] %>;
+        const destLng = <%= order.deliveryCoordinates[0] %>;
+
+        // Initialize Map
+        const map = L.map('map').setView([destLat, destLng], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        // Customer Marker
+        const customerIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        L.marker([destLat, destLng], {icon: customerIcon}).addTo(map).bindPopup("Your Location").openPopup();
+
+        // Rider Marker
+        const riderIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        let riderMarker = null;
+
+        // WebSocket Connection for Live Location
+        const socket = io();
+        const orderId = "<%= order._id %>";
+        
+        socket.emit('join_room', orderId);
+
+        socket.on('location_updated', (coordinates) => {
+            const [lng, lat] = coordinates;
+            
+            document.getElementById('trackingStatus').innerHTML = '<i class="fas fa-satellite-dish" style="color: var(--color-success);"></i> Live GPS signal connected';
+            
+            if (!riderMarker) {
+                riderMarker = L.marker([lat, lng], {icon: riderIcon}).addTo(map).bindPopup("Rider Location").openPopup();
+            } else {
+                riderMarker.setLatLng([lat, lng]);
+            }
+            
+            // Auto fit bounds to see both rider and customer
+            const group = new L.featureGroup([L.marker([destLat, destLng]), riderMarker]);
+            map.fitBounds(group.getBounds(), { padding: [50, 50] });
+        });
+    });
+</script>

@@ -1,0 +1,126 @@
+<% layout('layouts/main') %>
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h1>Active Delivery</h1>
+            <p>Deliver the order to the customer's location</p>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h3 class="card-title">Order Info</h3>
+            <p><strong>Restaurant:</strong> <%= order.restaurantId.name %></p>
+            <p><strong>Customer:</strong> <%= order.customerId.name %></p>
+            <p><strong>Customer Phone:</strong> <%= order.customerId.phone %></p>
+            <p><strong>Delivery Address:</strong> <%= order.deliveryAddress %></p>
+            
+            <div class="d-flex gap-sm mb-md mt-md">
+                <a href="/orders/<%= order._id %>/chat" class="btn btn-primary" style="flex:1; text-align: center;">
+                    <i class="fas fa-comment-dots"></i> Chat
+                </a>
+                <a href="tel:<%= order.customerId.phone %>" class="btn btn-success" style="flex:1; text-align: center;">
+                    <i class="fas fa-phone-alt"></i> Call
+                </a>
+            </div>
+
+            <hr style="margin: var(--space-md) 0;">
+            
+            <h4>Items</h4>
+            <ul style="list-style: none; padding: 0;">
+                <% order.items.forEach(item => { %>
+                    <li style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                        <span><%= item.quantity %>x <%= item.name %></span>
+                        <span>Rs. <%= item.unitDisplayPrice * item.quantity %></span>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Map & Status</h3>
+            <div id="map" style="height: 300px; width: 100%; border-radius: var(--radius-sm); z-index: 1; margin-bottom: var(--space-md);"></div>
+            
+            <% if (order.status === 'Accepted by Rider') { %>
+                <form action="/orders/<%= order._id %>/status" method="POST">
+                    <input type="hidden" name="status" value="Out for Delivery">
+                    <button type="submit" class="btn btn-warning btn-block">Pick Up Order</button>
+                </form>
+            <% } else if (order.status === 'Out for Delivery') { %>
+                <form id="dropOffForm" action="/orders/<%= order._id %>/status" method="POST">
+                    <input type="hidden" name="status" value="Pending Customer Confirmation">
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fas fa-check-circle"></i> Mark as Dropped Off
+                    </button>
+                </form>
+            <% } else { %>
+                <div class="badge badge-success" style="display: block; text-align: center; font-size: 1.1rem; padding: var(--space-sm);">
+                    <%= order.status %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const socket = io();
+        const orderId = "<%= order._id %>";
+        
+        const destLat = <%= order.deliveryCoordinates[1] %>;
+        const destLng = <%= order.deliveryCoordinates[0] %>;
+
+        const map = L.map('map').setView([destLat, destLng], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        L.marker([destLat, destLng]).addTo(map).bindPopup("Customer Location").openPopup();
+
+        // Rider Location Tracking
+        const riderIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        
+        let riderMarker = null;
+
+        if (navigator.geolocation && ("<%= order.status %>" === "Out for Delivery" || "<%= order.status %>" === "Accepted by Rider")) {
+            navigator.geolocation.watchPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // Update map
+                    if (!riderMarker) {
+                        riderMarker = L.marker([lat, lng], {icon: riderIcon}).addTo(map).bindPopup("Your Location").openPopup();
+                    } else {
+                        riderMarker.setLatLng([lat, lng]);
+                    }
+                    
+                    // Emit to server
+                    socket.emit('update_location', {
+                        orderId: orderId,
+                        coordinates: [lng, lat]
+                    });
+                },
+                function(error) {
+                    console.error("GPS Error:", error);
+                },
+                { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+            );
+        }
+
+
+    });
+</script>
