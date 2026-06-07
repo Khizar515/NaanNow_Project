@@ -4,28 +4,28 @@
 
 /* --- CSS Custom Properties (Design Tokens) --- */
 :root {
-    /* Brand Colors (Yellowish/Hot) */
-    --color-primary: #F59E0B; 
-    --color-primary-light: #FBBF24;
-    --color-primary-dark: #D97706;
-    --color-primary-glow: rgba(245, 158, 11, 0.2);
+    /* Brand Colors */
+    --color-primary: #E85D04;
+    --color-primary-light: #F48C06;
+    --color-primary-dark: #DC2F02;
+    --color-primary-glow: rgba(232, 93, 4, 0.15);
 
-    /* Accent (Greenish) */
-    --color-accent: #84CC16;
-    --color-accent-light: #A3E635;
+    /* Accent */
+    --color-accent: #FFBA08;
+    --color-accent-light: #FAA307;
 
-    /* Neutrals (Bright/White Theme) */
-    --color-bg: #FAFAFA;
-    --color-bg-elevated: #FFFFFF;
-    --color-bg-card: #FFFFFF;
-    --color-bg-input: #F4F4F5;
-    --color-border: #E4E4E7;
-    --color-border-light: #D4D4D8;
+    /* Neutrals */
+    --color-bg: #0A0A0F;
+    --color-bg-elevated: #12121A;
+    --color-bg-card: #1A1A25;
+    --color-bg-input: #22222F;
+    --color-border: #2A2A3A;
+    --color-border-light: #3A3A4A;
 
-    /* Text (Dark on light backgrounds) */
-    --color-text: #18181B;
-    --color-text-muted: #52525B;
-    --color-text-dim: #A1A1AA;
+    /* Text */
+    --color-text: #F0F0F5;
+    --color-text-muted: #8888A0;
+    --color-text-dim: #5A5A70;
 
     /* Status */
     --color-success: #22C55E;
@@ -165,7 +165,7 @@ h4 { font-size: var(--font-size-xl); }
     top: 0;
     z-index: 1000;
     height: var(--navbar-height);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(10, 10, 15, 0.85);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--color-border);
     display: flex;
@@ -982,7 +982,7 @@ textarea.form-control {
    Wallet Cards
    ============================================ */
 .wallet-card {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-accent) 100%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     border: 1px solid var(--color-border-light);
     border-radius: var(--radius-xl);
     padding: var(--space-xl) var(--space-2xl);
