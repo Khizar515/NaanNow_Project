@@ -105,13 +105,13 @@
             
             if (!riderMarker) {
                 riderMarker = L.marker([lat, lng], {icon: riderIcon}).addTo(map).bindPopup("Rider Location").openPopup();
+                
+                // Auto fit bounds to see both rider and customer (only on initial load)
+                const group = new L.featureGroup([L.marker([destLat, destLng]), riderMarker]);
+                map.fitBounds(group.getBounds(), { padding: [50, 50] });
             } else {
                 riderMarker.setLatLng([lat, lng]);
             }
-            
-            // Auto fit bounds to see both rider and customer
-            const group = new L.featureGroup([L.marker([destLat, destLng]), riderMarker]);
-            map.fitBounds(group.getBounds(), { padding: [50, 50] });
         });
     });
 </script>

@@ -31,7 +31,7 @@
                     <% orders.forEach(order => { %>
                         <tr>
                             <td>
-                                <code style="font-size:var(--font-size-xs);color:var(--color-text-dim);">#<%= order._id.toString().slice(-6).toUpperCase() %></code>
+                                <code style="font-size:var(--font-size-xs);color:var(--color-text-dim);">#<%= order._id %></code>
                                 <div class="text-dim" style="font-size:var(--font-size-xs);margin-top:2px;">
                                     <%= new Date(order.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }) %>
                                 </div>
