@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }, // We will hash this later
+    password: { type: String, required: true },
     phone: { type: String, required: true },
     role: { 
         type: String, 
@@ -13,10 +13,9 @@ const userSchema = new mongoose.Schema({
     profilePic: { type: String, default: '/uploads/defaults/profile-avatar.png' },
     earningsBalance: { type: Number, default: 0 }, 
     
-    // 👇 NEW: Rider Verification Fields
-    isApprovedRider: { type: Boolean, default: false }, // Admins must flip this to true
-    riderProofs: [{ type: String }], // Will store the file paths
-    // Useful for customers and riders
+    //Rider Verification
+    isApprovedRider: { type: Boolean, default: false },
+    riderProofs: [{ type: String }],
     address: { type: String }, 
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }]
 }, { timestamps: true });

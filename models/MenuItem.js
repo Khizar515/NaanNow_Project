@@ -7,10 +7,10 @@ const menuItemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     
-    // The price the vendor actually wants (e.g., 500 PKR)
+    // The price the vendor actually wants
     basePrice: { type: Number, required: true }, 
     
-    category: { type: String, required: true }, // e.g., "Starters", "Mains", "Drinks"
+    category: { type: String, required: true }, //"Starters", "Mains", "Drinks"
     imageUrl: { type: String, default: '' },
     isAvailable: { type: Boolean, default: true }
 }, { timestamps: true });

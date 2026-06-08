@@ -15,9 +15,7 @@ const { calculateDistance } = require('../utils/geoMath');
 // Shared constant for wallet balance limits
 const MAX_WALLET_BALANCE = 50000;
 
-// @route   GET /orders/checkout
-// @desc    Show the checkout page
-// @access  Protected (Customers Only)
+//Show the checkout page
 router.get('/checkout', protect, authorize('customer'), async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user.userId })
@@ -51,9 +49,7 @@ router.get('/checkout', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   POST /orders/checkout
-// @desc    Process payment, generate order from DB Cart, and clear Cart
-// @access  Protected (Customers Only)
+//Process payment, generate order from DB Cart, and clear Cart
 router.post('/checkout', protect, authorize('customer'), async (req, res) => {
     try {
         const { cardId, pin, deliveryAddress, longitude, latitude } = req.body;
@@ -65,7 +61,7 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
             return res.redirect('/orders/checkout');
         }
 
-        // 1. FETCH CART FROM DATABASE
+        // fetch cart from db
         const cart = await Cart.findOne({ userId: req.user.userId });
         if (!cart || cart.items.length === 0) {
             req.flash('error_msg', 'Your cart is empty! Add some items first.');
@@ -74,7 +70,7 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
         
         const restaurantId = cart.restaurantId;
 
-        // 2. VERIFY WALLET & SECURITY PIN
+        // verify wallet and card pin
         const card = await PaymentMethod.findOne({ _id: cardId, userId: req.user.userId, isActive: true });
         if (!card) {
             req.flash('error_msg', 'Payment card not found.');
@@ -87,11 +83,10 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
             return res.redirect('/orders/checkout');
         }
 
-        // 3. CALCULATE ITEM TOTALS WITH ADMIN MARKUP
+        // Calculate total with platform markup
         const settings = await AdminSettings.findOne();
         const markupPercentage = settings ? settings.platformMarkupPercentage : 10;
-        // BUG FIX: was reading settings.perKmRate which doesn't exist — correct field is perKmDeliveryRate
-        const perKmRate = settings ? settings.perKmDeliveryRate : 40;
+        const perKmRate = settings ? settings.perKmDeliveryRate : 30;
 
         let itemTotal = 0;
         let vendorTotal = 0; // Track what the vendor actually earns
@@ -118,7 +113,7 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
             });
         }
 
-        // 4. CALCULATE DELIVERY DISTANCE & FEE
+        // calculate dilivery distance and fee
         const restaurant = await Restaurant.findById(restaurantId);
         if (!restaurant || !restaurant.isOpen) {
             req.flash('error_msg', 'Restaurant is closed or unavailable.');
@@ -126,10 +121,10 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
         }
 
         const distanceKm = await calculateDistance(restaurant.location.coordinates, deliveryCoordinates);
-        const deliveryFee = Math.max(50, Math.round(distanceKm * perKmRate)); 
+        const deliveryFee = Math.max(50, Math.round(distanceKm * perKmRate)); //minimum Rs.50
         const grandTotal = itemTotal + deliveryFee;
 
-        // 5. VERIFY BALANCE & DEDUCT
+        // verify balance and deduct
         if (card.balance < grandTotal) {
             req.flash('error_msg', `Insufficient balance. Total is Rs. ${grandTotal}, but your card has Rs. ${card.balance}.`);
             return res.redirect('/orders/checkout');
@@ -137,7 +132,7 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
         card.balance -= grandTotal;
         await card.save();
 
-        // 6. GENERATE ORDER RECEIPT
+        //Create order
         const order = new Order({
             customerId: req.user.userId,
             restaurantId,
@@ -148,7 +143,6 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
         });
         await order.save();
 
-        // 7. PAY THE VENDOR (BUG FIX: vendor payout was missing)
         // The vendor gets the base price total (without platform markup)
         const owner = await User.findById(restaurant.ownerId);
         if (owner) {
@@ -156,7 +150,7 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
             await owner.save();
         }
 
-        // 8. WIPE THE CART CLEAN
+        //clear cart
         await Cart.findOneAndDelete({ userId: req.user.userId });
 
         req.flash('success_msg', 'Payment successful! Your order has been placed.');
@@ -169,9 +163,7 @@ router.post('/checkout', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   POST /orders/calculate-preview
-// @desc    Calculate exact totals for checkout preview
-// @access  Protected (Customers Only)
+//Calculate exact totals for checkout preview
 router.post('/calculate-preview', protect, authorize('customer'), async (req, res) => {
     try {
         const { longitude, latitude } = req.body;
@@ -213,9 +205,7 @@ router.post('/calculate-preview', protect, authorize('customer'), async (req, re
     }
 });
 
-// @route   GET /orders/my-orders
-// @desc    Customer order history
-// @access  Protected (Customers Only)
+//Customer order history
 router.get('/my-orders', protect, authorize('customer'), async (req, res) => {
     try {
         const orders = await Order.find({ customerId: req.user.userId }).sort({ createdAt: -1 });
@@ -226,9 +216,7 @@ router.get('/my-orders', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   GET /orders/restaurant-queue
-// @desc    Dashboard for incoming vendor orders
-// @access  Protected (Restaurant Owners Only)
+//Dashboard for incoming vendor orders
 router.get('/restaurant-queue', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ ownerId: req.user.userId });
@@ -245,9 +233,7 @@ router.get('/restaurant-queue', protect, authorize('restaurant_owner'), async (r
     }
 });
 
-// @route   GET /orders/available-deliveries
-// @desc    Rider board to find orders ready to be picked up
-// @access  Protected (Riders Only)
+//Rider board to find orders ready to be picked up
 router.get('/available-deliveries', protect, authorize('rider'), async (req, res) => {
     try {
         // Enforce rider approval
@@ -266,9 +252,7 @@ router.get('/available-deliveries', protect, authorize('rider'), async (req, res
     }
 });
 
-// @route   GET /orders/active-delivery
-// @desc    Show the rider's currently active order
-// @access  Protected (Riders Only)
+//Show the rider's currently active order
 router.get('/active-delivery', protect, authorize('rider'), async (req, res) => {
     try {
         const order = await Order.findOne({ 
@@ -290,9 +274,7 @@ router.get('/active-delivery', protect, authorize('rider'), async (req, res) => 
     }
 });
 
-// @route   POST /orders/:id/status
-// @desc    Update order lifecycle
-// @access  Protected (Restaurant Owner or Rider)
+//Update order lifecycle
 router.post('/:id/status', protect, authorize('restaurant_owner', 'rider'), async (req, res) => {
     try {
         const { status, latitude, longitude } = req.body;
@@ -323,7 +305,6 @@ router.post('/:id/status', protect, authorize('restaurant_owner', 'rider'), asyn
                 req.flash('error_msg', 'You are not assigned to this delivery.');
                 return res.redirect('/orders/available-deliveries');
             }
-            // Geofencing ripped off: just require customer confirmation
         }
 
         order.status = status;
@@ -347,9 +328,7 @@ router.post('/:id/status', protect, authorize('restaurant_owner', 'rider'), asyn
     }
 });
 
-// @route   POST /orders/:id/confirm-delivery
-// @desc    Customer confirms receipt of the order
-// @access  Protected (Customers Only)
+//Customer confirms receipt of the order
 router.post('/:id/confirm-delivery', protect, authorize('customer'), async (req, res) => {
     try {
         const order = await Order.findOne({ _id: req.params.id, customerId: req.user.userId });
@@ -366,7 +345,7 @@ router.post('/:id/confirm-delivery', protect, authorize('customer'), async (req,
         order.status = 'Delivered';
         await order.save();
 
-        // THE FINANCIAL CLEARINGHOUSE (PAY THE RIDER)
+        // Pay rider
         if (order.riderId) {
             const riderAccount = await User.findById(order.riderId);
             if (riderAccount) {
@@ -384,9 +363,7 @@ router.post('/:id/confirm-delivery', protect, authorize('customer'), async (req,
     }
 });
 
-// @route   POST /orders/:id/cancel
-// @desc    Cancel a pending order and refund the customer
-// @access  Protected (Customers Only)
+//Cancel a pending order and refund the customer
 router.post('/:id/cancel', protect, authorize('customer'), async (req, res) => {
     try {
         const order = await Order.findOne({ _id: req.params.id, customerId: req.user.userId });
@@ -440,9 +417,7 @@ router.post('/:id/cancel', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   GET /orders/:id/track
-// @desc    Customer order tracking page with live map
-// @access  Protected (Customers Only)
+//Customer order tracking page with live map
 router.get('/:id/track', protect, authorize('customer'), async (req, res) => {
     try {
         const order = await Order.findOne({ _id: req.params.id, customerId: req.user.userId })
@@ -467,9 +442,7 @@ router.get('/:id/track', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   GET /orders/:id/chat
-// @desc    Real-time chat between Rider and Customer
-// @access  Protected (Customer or Rider)
+//Real-time chat between Rider and Customer
 router.get('/:id/chat', protect, authorize('customer', 'rider'), async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)

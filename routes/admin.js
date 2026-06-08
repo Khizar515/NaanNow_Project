@@ -6,12 +6,9 @@ const Order = require('../models/Order');
 const AdminSettings = require('../models/AdminSettings');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// ALL routes in this file require an Admin token!
 router.use(protect);
 router.use(authorize('admin'));
 
-// @route   GET /admin/dashboard
-// @desc    Admin Dashboard with aggregate stats
 router.get('/dashboard', async (req, res) => {
     try {
         const totalUsers = await User.countDocuments();
@@ -40,8 +37,6 @@ router.get('/dashboard', async (req, res) => {
     }
 });
 
-// @route   GET /admin/users
-// @desc    List all users for management
 router.get('/users', async (req, res) => {
     try {
         const users = await User.find().select('-password').sort({ createdAt: -1 });
@@ -52,8 +47,7 @@ router.get('/users', async (req, res) => {
     }
 });
 
-// @route   GET /admin/restaurants
-// @desc    List all restaurants for approval management
+//List all restaurants for approval management
 router.get('/restaurants', async (req, res) => {
     try {
         const restaurants = await Restaurant.find().populate('ownerId', 'name email').sort({ createdAt: -1 });
@@ -64,8 +58,7 @@ router.get('/restaurants', async (req, res) => {
     }
 });
 
-// @route   GET /admin/riders
-// @desc    List all riders for approval management
+// List all riders for approval management
 router.get('/riders', async (req, res) => {
     try {
         const riders = await User.find({ role: 'rider' }).select('-password').sort({ createdAt: -1 });
@@ -76,8 +69,7 @@ router.get('/riders', async (req, res) => {
     }
 });
 
-// @route   POST /admin/approve-restaurant/:id
-// @desc    Approve a restaurant to go live
+//Approve a restaurant to go live
 router.post('/approve-restaurant/:id', async (req, res) => {
     try {
         const shop = await Restaurant.findById(req.params.id);
@@ -98,8 +90,7 @@ router.post('/approve-restaurant/:id', async (req, res) => {
     }
 });
 
-// @route   POST /admin/revoke-restaurant/:id
-// @desc    Suspend a restaurant and provide a reason
+// Suspend a restaurant and provide a reason
 router.post('/revoke-restaurant/:id', async (req, res) => {
     try {
         const { reason } = req.body;
@@ -128,8 +119,7 @@ router.post('/revoke-restaurant/:id', async (req, res) => {
     }
 });
 
-// @route   POST /admin/change-role/:userId
-// @desc    Promote or demote a user account
+// Promote or demote a user account
 router.post('/change-role/:userId', async (req, res) => {
     try {
         const { newRole } = req.body;
@@ -163,8 +153,7 @@ router.post('/change-role/:userId', async (req, res) => {
     }
 });
 
-// @route   GET /admin/settings
-// @desc    Show settings form
+//Show settings form
 router.get('/settings', async (req, res) => {
     try {
         const platformSettings = await AdminSettings.findOne();
@@ -175,8 +164,7 @@ router.get('/settings', async (req, res) => {
     }
 });
 
-// @route   POST /admin/settings
-// @desc    Update global financial markup and delivery rates
+// Update global financial markup and delivery rates
 router.post('/settings', async (req, res) => {
     try {
         const { platformMarkupPercentage, perKmDeliveryRate } = req.body;
@@ -199,8 +187,7 @@ router.post('/settings', async (req, res) => {
     }
 });
 
-// @route   POST /admin/approve-rider/:id
-// @desc    Approve a rider after checking their uploaded proofs
+//Approve a rider after checking their uploaded proofs
 router.post('/approve-rider/:id', async (req, res) => {
     try {
         const rider = await User.findById(req.params.id);

@@ -5,12 +5,10 @@ const PaymentMethod = require('../models/PaymentMethod');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 
-// Shared constant to fix inconsistency (was 50k in top-up, 100k in withdraw)
+// Shared constant
 const MAX_WALLET_BALANCE = 50000;
 
-// @route   GET /wallet
-// @desc    Wallet dashboard — show cards and balances
-// @access  Protected
+//Wallet dashboard — show cards and balances
 router.get('/', protect, async (req, res) => {
     try {
         const cards = await PaymentMethod.find({ 
@@ -36,16 +34,12 @@ router.get('/', protect, async (req, res) => {
     }
 });
 
-// @route   GET /wallet/add-card
-// @desc    Show add card form
-// @access  Protected
+//Show add card form
 router.get('/add-card', protect, (req, res) => {
     res.render('wallet/add-card', { title: 'Add Card' });
 });
 
-// @route   POST /wallet/add-card
-// @desc    Add a new payment method or reactivate a deleted one
-// @access  Protected
+//Add a new payment method or reactivate a deleted one
 router.post('/add-card', protect, async (req, res) => {
     try {
         const { cardHolderName, cardNumber, expiryDate, cvv, pin } = req.body;
@@ -100,9 +94,7 @@ router.post('/add-card', protect, async (req, res) => {
     }
 });
 
-// @route   POST /wallet/:id/deactivate
-// @desc    Deactivate a payment method (Soft Delete)
-// @access  Protected
+//Deactivate a payment method (Soft Delete)
 router.post('/:id/deactivate', protect, async (req, res) => {
     try {
         const card = await PaymentMethod.findOne({ 
@@ -128,9 +120,7 @@ router.post('/:id/deactivate', protect, async (req, res) => {
     }
 });
 
-// @route   POST /wallet/top-up
-// @desc    Add funds to an existing active card (with capacity limits)
-// @access  Protected (Customers Only)
+//Add funds to an existing active card (with capacity limits)
 router.post('/top-up', protect, authorize('customer'), async (req, res) => {
     try {
         const { cardId, amount } = req.body;
@@ -176,10 +166,8 @@ router.post('/top-up', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   GET /wallet/earnings
-// @desc    View platform earnings balance
-// @access  Protected (Riders and Restaurant Owners)
-router.get('/earnings', protect, authorize('rider', 'restaurant_owner', 'admin'), async (req, res) => {
+//View earnings balance
+router.get('/earnings', protect, authorize('rider', 'restaurant_owner'), async (req, res) => {
     try {
         const user = await User.findById(req.user.userId).select('earningsBalance');
         
@@ -202,9 +190,7 @@ router.get('/earnings', protect, authorize('rider', 'restaurant_owner', 'admin')
     }
 });
 
-// @route   POST /wallet/withdraw
-// @desc    Transfer money from Platform Earnings to a linked Bank Card
-// @access  Protected (Riders and Restaurant Owners)
+//Transfer money from Platform Earnings to a linked Bank Card
 router.post('/withdraw', protect, authorize('rider', 'restaurant_owner'), async (req, res) => {
     try {
         const { cardId, amount } = req.body;

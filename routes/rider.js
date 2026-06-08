@@ -6,16 +6,12 @@ const User = require('../models/User');
 const upload = require('../middleware/uploadMiddleware');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// @route   GET /riders/submit-proofs
-// @desc    Show proof upload form
-// @access  Protected (Riders Only)
+//Show proof upload form
 router.get('/submit-proofs', protect, authorize('rider'), (req, res) => {
     res.render('riders/submit-proofs', { title: 'Submit Proofs' });
 });
 
-// @route   POST /riders/submit-proofs
-// @desc    Upload bike and license proofs for Admin review
-// @access  Protected (Riders Only)
+//Upload bike and license proofs for Admin review
 router.post('/submit-proofs', protect, authorize('rider'), upload.array('documents', 5), async (req, res) => {
     try {
         const user = await User.findById(req.user.userId);
