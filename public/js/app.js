@@ -1,8 +1,6 @@
-// NaanNow — Client-Side JavaScript
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Auto-dismiss flash messages after 5 seconds ---
+    // Auto-dismiss flash messages after 5 seconds
     const flashMessages = document.querySelectorAll('.flash-message');
     flashMessages.forEach(msg => {
         setTimeout(() => {
@@ -11,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     });
 
-    // --- Flash close buttons ---
+    //Flash close buttons
     document.querySelectorAll('.flash-close').forEach(btn => {
         btn.addEventListener('click', () => {
             const msg = btn.closest('.flash-message');
@@ -20,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Mobile nav toggle ---
+    //Mobile nav toggle
     const navToggle = document.querySelector('.nav-toggle');
     const navLinks = document.querySelector('.navbar-links');
     if (navToggle && navLinks) {
@@ -29,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Confirm dangerous actions ---
+    //Confirm dangerous actions
     document.querySelectorAll('[data-confirm]').forEach(el => {
         el.addEventListener('click', (e) => {
             const message = el.getAttribute('data-confirm') || 'Are you sure?';
@@ -39,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Add animation keyframe for flash dismiss ---
+    //Add animation keyframe for flash dismiss
     const style = document.createElement('style');
     style.textContent = `
         @keyframes flashSlideOut {

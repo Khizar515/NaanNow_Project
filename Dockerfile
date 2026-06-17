@@ -1,4 +1,4 @@
-# Use a lightweight Node image
+# lightweight Node image
 FROM node:20-alpine
 
 # Set working directory inside container

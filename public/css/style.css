@@ -1,20 +1,13 @@
-/* ============================================
-   NaanNow — Design System & Global Styles
-   ============================================ */
-
-/* --- CSS Custom Properties (Design Tokens) --- */
+/*CSS Custom Properties (Design Tokens)*/
 :root {
-    /* Brand Colors (Yellowish/Hot) */
     --color-primary: #F59E0B;
     --color-primary-light: #FBBF24;
     --color-primary-dark: #D97706;
     --color-primary-glow: rgba(245, 158, 11, 0.2);
 
-    /* Accent (Greenish) */
     --color-accent: #84CC16;
     --color-accent-light: #A3E635;
 
-    /* Neutrals (Bright/White Theme) */
     --color-bg: #FAFAFA;
     --color-bg-elevated: #FFFFFF;
     --color-bg-card: #FFFFFF;
@@ -22,12 +15,10 @@
     --color-border: #E4E4E7;
     --color-border-light: #D4D4D8;
 
-    /* Text (Dark on light backgrounds) */
     --color-text: #18181B;
     --color-text-muted: #52525B;
     --color-text-dim: #A1A1AA;
 
-    /* Status */
     --color-success: #22C55E;
     --color-success-bg: rgba(34, 197, 94, 0.1);
     --color-danger: #EF4444;
@@ -37,7 +28,6 @@
     --color-info: #3B82F6;
     --color-info-bg: rgba(59, 130, 246, 0.1);
 
-    /* Typography */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
@@ -49,7 +39,6 @@
     --font-size-4xl: 2.5rem;
     --font-size-5xl: 3.5rem;
 
-    /* Spacing */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
     --space-md: 1rem;
@@ -58,31 +47,26 @@
     --space-2xl: 3rem;
     --space-3xl: 4rem;
 
-    /* Border Radius */
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 50%;
 
-    /* Shadows */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 20px rgba(232, 93, 4, 0.3);
 
-    /* Transitions */
     --transition-fast: 150ms ease;
     --transition-base: 250ms ease;
     --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Layout */
     --navbar-height: 70px;
     --sidebar-width: 260px;
     --container-max: 1200px;
 }
 
-/* --- Reset & Base --- */
 *,
 *::before,
 *::after {
@@ -126,7 +110,6 @@ ol {
     list-style: none;
 }
 
-/* --- Typography --- */
 h1,
 h2,
 h3,
@@ -182,7 +165,6 @@ h4 {
     text-align: center;
 }
 
-/* --- Container --- */
 .container {
     width: 100%;
     max-width: var(--container-max);
@@ -196,9 +178,7 @@ h4 {
     padding-bottom: var(--space-3xl);
 }
 
-/* ============================================
-   Navbar
-   ============================================ */
+/* Navbar */
 .navbar {
     position: sticky;
     top: 0;
@@ -306,9 +286,7 @@ h4 {
     cursor: pointer;
 }
 
-/* ============================================
-   Flash Messages
-   ============================================ */
+/* Flash Messages */
 .flash-container {
     position: fixed;
     top: calc(var(--navbar-height) + 12px);
@@ -383,9 +361,7 @@ h4 {
     }
 }
 
-/* ============================================
-   Cards
-   ============================================ */
+/* Cards */
 .card {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
@@ -421,9 +397,7 @@ h4 {
     margin-bottom: var(--space-md);
 }
 
-/* ============================================
-   Buttons
-   ============================================ */
+/* Button */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -528,9 +502,7 @@ h4 {
     border-radius: var(--radius-sm);
 }
 
-/* ============================================
-   Forms
-   ============================================ */
+/* Form */
 .form-group {
     margin-bottom: var(--space-lg);
 }
@@ -619,9 +591,7 @@ textarea.form-control {
     border-color: var(--color-primary);
 }
 
-/* ============================================
-   Auth Pages (Login / Register)
-   ============================================ */
+/* Login/Register */
 .auth-wrapper {
     display: flex;
     align-items: center;
@@ -679,9 +649,7 @@ textarea.form-control {
     background: var(--color-border);
 }
 
-/* ============================================
-   Grid Layout
-   ============================================ */
+/* Grid Layoyt */
 .grid {
     display: grid;
     gap: var(--space-lg);
@@ -699,9 +667,7 @@ textarea.form-control {
     grid-template-columns: repeat(4, 1fr);
 }
 
-/* ============================================
-   Stats Cards (Admin / Dashboard)
-   ============================================ */
+/* Admin dashboard */
 .stat-card {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
@@ -763,9 +729,7 @@ textarea.form-control {
     font-weight: 500;
 }
 
-/* ============================================
-   Tables
-   ============================================ */
+/* Tables */
 .table-wrapper {
     overflow-x: auto;
     border: 1px solid var(--color-border);
@@ -808,9 +772,7 @@ textarea.form-control {
     border-bottom: none;
 }
 
-/* ============================================
-   Badges / Status Pills
-   ============================================ */
+/* Badges */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -847,9 +809,7 @@ textarea.form-control {
     color: var(--color-primary);
 }
 
-/* ============================================
-   Page Header
-   ============================================ */
+/* Page header */
 .page-header {
     display: flex;
     align-items: center;
@@ -869,9 +829,7 @@ textarea.form-control {
     font-size: var(--font-size-sm);
 }
 
-/* ============================================
-   Restaurant Cards (Homepage)
-   ============================================ */
+/* Restuarant card */
 .restaurant-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -924,9 +882,7 @@ textarea.form-control {
     color: var(--color-text-muted);
 }
 
-/* ============================================
-   Menu Items
-   ============================================ */
+/* menu item */
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -983,9 +939,7 @@ textarea.form-control {
     color: var(--color-primary-light);
 }
 
-/* ============================================
-   Cart
-   ============================================ */
+/* cart */
 .cart-layout {
     display: grid;
     grid-template-columns: 1fr 380px;
@@ -1055,9 +1009,7 @@ textarea.form-control {
     color: var(--color-text);
 }
 
-/* ============================================
-   Wallet Cards
-   ============================================ */
+/* wallet cards */
 .wallet-card {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-accent) 100%);
     border: 1px solid var(--color-border-light);
@@ -1107,9 +1059,7 @@ textarea.form-control {
     color: var(--color-text-muted);
 }
 
-/* ============================================
-   Order Status Timeline
-   ============================================ */
+/* Order status timeline */
 .order-timeline {
     display: flex;
     align-items: center;
@@ -1173,9 +1123,7 @@ textarea.form-control {
     font-weight: 600;
 }
 
-/* ============================================
-   Empty State
-   ============================================ */
+/* Empty state */
 .empty-state {
     text-align: center;
     padding: var(--space-3xl) var(--space-xl);
@@ -1198,9 +1146,7 @@ textarea.form-control {
     margin-bottom: var(--space-xl);
 }
 
-/* ============================================
-   Footer
-   ============================================ */
+/* Footer */
 .footer {
     background: var(--color-bg-elevated);
     border-top: 1px solid var(--color-border);
@@ -1216,9 +1162,7 @@ textarea.form-control {
     color: var(--color-text-dim);
 }
 
-/* ============================================
-   Utility Classes
-   ============================================ */
+/* Utility */
 .d-flex {
     display: flex;
 }
@@ -1283,9 +1227,7 @@ textarea.form-control {
     width: 100%;
 }
 
-/* ============================================
-   Responsive
-   ============================================ */
+/* Media querries (Responsive) */
 @media (max-width: 992px) {
     .grid-4 {
         grid-template-columns: repeat(2, 1fr);
