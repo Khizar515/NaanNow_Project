@@ -16,33 +16,21 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://database:27017/Naan_Now';
 
-// ========================
-// VIEW ENGINE SETUP (EJS)
-// ========================
+// EJS
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// ========================
-// STATIC FILES
-// ========================
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ========================
-// BODY PARSING
-// ========================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ========================
-// METHOD OVERRIDE (PUT/DELETE from forms)
-// ========================
 app.use(methodOverride('_method'));
 
-// ========================
-// SESSION MANAGEMENT
-// ========================
+// Session Management
 app.use(session({
     secret: process.env.JWT_SECRET || 'naannow-session-secret-dev',
     resave: false,
@@ -50,12 +38,12 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: MONGO_URI,
         collectionName: 'sessions',
-        ttl: 7 * 24 * 60 * 60 // 7 days (matches JWT expiry)
+        ttl: 7 * 24 * 60 * 60 // 7 days
     }),
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
         httpOnly: true,
-        secure: false // Set to true in production with HTTPS
+        secure: false //true for https
     }
 }));
 

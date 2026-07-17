@@ -1,0 +1,20 @@
+# ==========================================
+# NAANNOW PRODUCTION ENVIRONMENT VARIABLES
+# ==========================================
+
+# 1. Server Configuration
+NODE_ENV=production
+PORT=5000
+
+# 2. Database Connection
+# MongoDB is running in its own Docker container
+MONGO_URI=mongodb://mongo:27017/Naan_Now
+
+# 3. Security Secrets
+# Used to encrypt your Rider/Customer API tokens
+JWT_SECRET=812cbc92191d1e4ddefb2aaa7b658523ae2f036cbb506a4f18442f2364238dd2
+
+# Used to encrypt the website login sessions
+SESSION_SECRET=a38891aa2308598a66760ced65ae01b89eaf58145f1b429c36b605999bac>
+
+
