@@ -58,6 +58,14 @@
                             </td>
                             <td>
                                 <div class="d-flex gap-sm" style="flex-direction:column;">
+                                    <% if (shop.isApproved) { %>
+                                    <form action="/admin/revoke-restaurant/<%= shop._id %>" method="POST">
+                                        <center><input type="text" name="reason" value="" required placeholder="Reason" style="height: 2rem; margin-bottom: 0.5rem; padding: 0.25rem; border-radius: 0.25rem; border-color: gray; border: 0.2;"></center>
+                                        <Button type="submit" class="btn btn-danger btn-sm w-100" data-confirm="Revoke this restaurant?">
+                                            <i class="fas fa-ban"></i> Revoke
+                                        </button>
+                                    </form>
+                                    <% } %>
                                     <% if (!shop.isApproved) { %>
                                         <form action="/admin/approve-restaurant/<%= shop._id %>" method="POST">
                                             <button type="submit" class="btn btn-success btn-sm w-100">
@@ -65,12 +73,6 @@
                                             </button>
                                         </form>
                                     <% } %>
-                                    <form action="/admin/revoke-restaurant/<%= shop._id %>" method="POST">
-                                        <input type="hidden" name="reason" value="Revoked by admin">
-                                        <button type="submit" class="btn btn-danger btn-sm w-100" data-confirm="Revoke this restaurant?">
-                                            <i class="fas fa-ban"></i> Revoke
-                                        </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>

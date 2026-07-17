@@ -1,7 +1,7 @@
 const multer = require('multer');
 const fs = require('fs');
 
-// 1. Tell Multer to temporarily store incoming files here
+// Tell Multer to temporarily store incoming files here
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const tempPath = 'uploads/temp/';

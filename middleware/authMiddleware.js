@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// 1. Session-based protection for EJS pages — redirects to login if not authenticated
+//Session-based protection
 const protect = (req, res, next) => {
     if (req.session && req.session.user) {
         req.user = req.session.user;
@@ -11,7 +11,7 @@ const protect = (req, res, next) => {
     return res.redirect('/auth/login');
 };
 
-// 2. Role-based authorization — redirects to home if role doesn't match
+//Role-based authorization
 const authorize = (...roles) => {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {
@@ -22,7 +22,7 @@ const authorize = (...roles) => {
     };
 };
 
-// 3. API-style JWT protection for AJAX/Socket.io endpoints that still need JSON responses
+//API-style JWT protection for AJAX/Socket.io endpoints
 const protectAPI = (req, res, next) => {
     // First check session (for EJS-based AJAX calls)
     if (req.session && req.session.user) {

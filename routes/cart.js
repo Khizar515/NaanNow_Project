@@ -4,14 +4,12 @@ const Cart = require('../models/Cart');
 const MenuItem = require('../models/MenuItem');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// @route   POST /cart/add
-// @desc    Add item to cart or update quantity
-// @access  Protected (Customer)
+//Add item to cart or update quantity
 router.post('/add', protect, authorize('customer'), async (req, res) => {
     try {
         const { menuItemId, quantity } = req.body;
 
-        // 1. Verify the item exists and find its restaurant
+        //Verify the item exists and find its restaurant
         const item = await MenuItem.findById(menuItemId);
         if (!item || !item.isAvailable) {
             req.flash('error_msg', 'Item unavailable.');
@@ -19,14 +17,14 @@ router.post('/add', protect, authorize('customer'), async (req, res) => {
             return res.redirect(referer);
         }
 
-        // 2. Find the user's cart (or create a new one)
+        //Find the user's cart (or create a new one)
         let cart = await Cart.findOne({ userId: req.user.userId });
 
         if (!cart) {
             cart = new Cart({ userId: req.user.userId, restaurantId: null, items: [] });
         }
 
-        // 3. The "Single Restaurant" Lockdown Rule
+        // The Single Restaurant Lockdown Rule
         if (cart.items.length > 0 && cart.restaurantId && cart.restaurantId.toString() !== item.restaurantId.toString()) {
             req.flash('warning_msg', 'Your cart contains items from another restaurant. Clear your cart to start a new order.');
             return res.redirect('/cart');
@@ -35,7 +33,7 @@ router.post('/add', protect, authorize('customer'), async (req, res) => {
         // Lock the cart to this restaurant
         cart.restaurantId = item.restaurantId;
 
-        // 4. Check if the item is already in the cart
+        //Check if the item is already in the cart
         const existingItemIndex = cart.items.findIndex(i => i.menuItemId.toString() === menuItemId);
 
         if (existingItemIndex > -1) {
@@ -55,9 +53,7 @@ router.post('/add', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   GET /cart
-// @desc    Get the current user's cart page
-// @access  Protected (Customer)
+// Get the current user's cart page
 router.get('/', protect, authorize('customer'), async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user.userId })
@@ -76,9 +72,7 @@ router.get('/', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   POST /cart/clear
-// @desc    Clear the entire cart
-// @access  Protected (Customer)
+//Clear the entire cart
 router.post('/clear', protect, authorize('customer'), async (req, res) => {
     try {
         await Cart.findOneAndDelete({ userId: req.user.userId });
@@ -90,9 +84,7 @@ router.post('/clear', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   POST /cart/remove-item/:menuItemId
-// @desc    Remove a specific item from the cart
-// @access  Protected (Customer)
+//Remove a specific item from the cart
 router.post('/remove-item/:menuItemId', protect, authorize('customer'), async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user.userId });

@@ -9,9 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const upload = require('../middleware/uploadMiddleware');
 
-// @route   POST /users/wishlist/:restaurantId
-// @desc    Toggle a restaurant in/out of the wishlist
-// @access  Protected (Customer)
+//Toggle a restaurant in/out of the wishlist
 router.post('/wishlist/:restaurantId', protect, authorize('customer'), async (req, res) => {
     try {
         const user = await User.findById(req.user.userId);
@@ -44,9 +42,7 @@ router.post('/wishlist/:restaurantId', protect, authorize('customer'), async (re
     }
 });
 
-// @route   GET /users/wishlist
-// @desc    Get the populated wishlist page
-// @access  Protected (Customer)
+//Get the populated wishlist page
 router.get('/wishlist', protect, authorize('customer'), async (req, res) => {
     try {
         const user = await User.findById(req.user.userId)
@@ -58,9 +54,7 @@ router.get('/wishlist', protect, authorize('customer'), async (req, res) => {
     }
 });
 
-// @route   GET /users/profile
-// @desc    Show user profile page
-// @access  Protected (All logged-in users)
+//Show user profile page
 router.get('/profile', protect, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId).select('-password');
@@ -75,9 +69,7 @@ router.get('/profile', protect, async (req, res) => {
     }
 });
 
-// @route   POST /users/profile/update
-// @desc    Update user profile details
-// @access  Protected (All logged-in users)
+//Update user profile details
 router.post('/profile/update', protect, async (req, res) => {
     try {
         const { name, phone, address, password } = req.body;
@@ -117,9 +109,7 @@ router.post('/profile/update', protect, async (req, res) => {
     }
 });
 
-// @route   POST /users/profile-pic
 // @desc    Upload or update a user's profile picture
-// @access  Protected (All logged-in users)
 router.post('/profile-pic', protect, upload.single('image'), async (req, res) => {
     try {
         if (!req.file) {

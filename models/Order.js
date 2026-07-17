@@ -5,12 +5,12 @@ const orderSchema = new mongoose.Schema({
     restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true },
     riderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, // Assigned later
     
-    // Snapshot of the items at the exact moment of purchase
+    // details of the items at the moment of purchase
     items: [{
         menuItemId: { type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem' },
         name: { type: String, required: true },
         quantity: { type: Number, required: true },
-        unitDisplayPrice: { type: Number, required: true } // Price INCLUDING the platform markup
+        unitDisplayPrice: { type: Number, required: true } // Price including platform markup
     }],
 
     deliveryAddress: { type: String, required: true },

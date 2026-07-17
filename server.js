@@ -16,12 +16,20 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://database:27017/Naan_Now';
 
+<<<<<<< HEAD
 // EJS
+=======
+//EJS
+>>>>>>> b65457ea009fe5d62929b9ca5b27c0a3b9db7ef2
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+<<<<<<< HEAD
 // Static files
+=======
+
+>>>>>>> b65457ea009fe5d62929b9ca5b27c0a3b9db7ef2
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -30,7 +38,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(methodOverride('_method'));
 
+<<<<<<< HEAD
 // Session Management
+=======
+//Session management
+>>>>>>> b65457ea009fe5d62929b9ca5b27c0a3b9db7ef2
 app.use(session({
     secret: process.env.JWT_SECRET || 'naannow-session-secret-dev',
     resave: false,
@@ -38,25 +50,29 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: MONGO_URI,
         collectionName: 'sessions',
+<<<<<<< HEAD
         ttl: 7 * 24 * 60 * 60 // 7 days
+=======
+        ttl: 7 * 24 * 60 * 60 // 7 days 
+>>>>>>> b65457ea009fe5d62929b9ca5b27c0a3b9db7ef2
     }),
     cookie: {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
         httpOnly: true,
+<<<<<<< HEAD
         secure: false //true for https
+=======
+        secure: false // true for https
+>>>>>>> b65457ea009fe5d62929b9ca5b27c0a3b9db7ef2
     }
 }));
 
-// ========================
-// FLASH MESSAGES
-// ========================
+//flash messages
 app.use(flash());
 
-// ========================
-// GLOBAL TEMPLATE VARIABLES
-// ========================
+//Global variables accessable to all EJS in project
 app.use((req, res, next) => {
-    // Make session user and flash messages available in ALL EJS templates
+    // session user and flash messages available in ALL EJS templates
     res.locals.currentUser = req.session.user || null;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
@@ -65,9 +81,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// ========================
-// ROUTES
-// ========================
+//Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/wallet', require('./routes/wallet'));
 app.use('/restaurants', require('./routes/restaurant'));
@@ -78,7 +92,7 @@ app.use('/riders', require('./routes/rider'));
 app.use('/users', require('./routes/user'));
 app.use('/cart', require('./routes/cart'));
 
-// Homepage route — show open restaurants
+// Homepage Route
 const Restaurant = require('./models/Restaurant');
 app.get('/', async (req, res) => {
     try {
@@ -92,9 +106,7 @@ app.get('/', async (req, res) => {
     }
 });
 
-// ========================
-// SOCKET.IO SETUP
-// ========================
+//ScoketIO
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -112,7 +124,7 @@ io.on('connection', (socket) => {
         console.log(`👤 User joined Order Room: ${orderId}`);
     });
 
-    // EVENT 2: CHAT MESSAGE
+    // Event: Chat message
     socket.on('send_message', async (data) => {
         // data = { orderId, senderId, senderName, text }
         try {
@@ -133,10 +145,9 @@ io.on('connection', (socket) => {
         }
     });
 
-    // EVENT 3: LIVE GPS TRACKING
+    // Event: Live GPS tracking
     socket.on('update_location', (data) => {
         // data = { orderId, coordinates: [lon, lat] }
-        // The Rider spams this event, and the Customer listens for 'location_updated'
         socket.to(data.orderId).emit('location_updated', data.coordinates);
     });
 
@@ -145,9 +156,7 @@ io.on('connection', (socket) => {
     });
 });
 
-// ========================
-// 404 HANDLER
-// ========================
+//Invalid Route handler
 app.use((req, res) => {
     res.status(404).render('home/index', {
         title: '404 — Not Found',
@@ -155,18 +164,13 @@ app.use((req, res) => {
     });
 });
 
-// ========================
-// DATABASE CONNECTION
-// ========================
+//Database Connection
 mongoose.connect(MONGO_URI)
-    .then(() => console.log('✅ MongoDB Connected Successfully'))
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+    .then(() => console.log('MongoDB Connected Successfully'))
+    .catch(err => console.error('MongoDB Connection Error:', err));
 
-// ========================
-// START SERVER
-// ========================
+
+//Start Server
 server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🔌 WebSockets enabled on port ${PORT}`);
-    console.log(`📄 EJS View Engine active — serving HTML pages`);
+    console.log(`Server running on port ${PORT}`);
 });

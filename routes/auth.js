@@ -8,15 +8,13 @@ const upload = require('../middleware/uploadMiddleware');
 const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
 
-// @route   GET /auth/register
-// @desc    Show registration form
+//Show registration form
 router.get('/register', (req, res) => {
     if (req.session.user) return res.redirect('/');
     res.render('auth/register', { title: 'Register' });
 });
 
-// @route   POST /auth/register
-// @desc    Register a new user (Customer, Rider, Restaurant Owner)
+//Register a new user (Customer, Rider, Restaurant Owner)
 router.post('/register', upload.array('documents', 5), async (req, res) => {
     try {
         const { name, email, password, phone, role, address } = req.body;
@@ -81,15 +79,13 @@ router.post('/register', upload.array('documents', 5), async (req, res) => {
     }
 });
 
-// @route   GET /auth/login
-// @desc    Show login form
+//Show login form
 router.get('/login', (req, res) => {
     if (req.session.user) return res.redirect('/');
     res.render('auth/login', { title: 'Login' });
 });
 
-// @route   POST /auth/login
-// @desc    Authenticate user & create session
+//Authenticate user & create session
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -141,8 +137,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// @route   GET /auth/logout
-// @desc    Destroy session and redirect to login
+//Destroy session and redirect to login
 router.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) console.error('Session destroy error:', err);

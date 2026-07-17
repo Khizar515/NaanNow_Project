@@ -8,16 +8,12 @@ const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// @route   GET /restaurants/register
-// @desc    Show restaurant registration form
-// @access  Protected (Restaurant Owners Only)
+//Show restaurant registration form
 router.get('/register', protect, authorize('restaurant_owner'), (req, res) => {
     res.render('restaurants/register', { title: 'Register Restaurant' });
 });
 
-// @route   POST /restaurants/register
-// @desc    Create a new shop profile (Requires Admin Approval later)
-// @access  Protected (Restaurant Owners Only)
+//Create a new shop profile (Requires Admin Approval later)
 router.post('/register', protect, authorize('restaurant_owner'), upload.fields([{ name: 'documents', maxCount: 5 }, { name: 'logo', maxCount: 1 }]), async (req, res) => {
     try {
         const existingShop = await Restaurant.findOne({ ownerId: req.user.userId });
@@ -79,9 +75,7 @@ router.post('/register', protect, authorize('restaurant_owner'), upload.fields([
     }
 });
 
-// @route   GET /restaurants/my-shop
-// @desc    Get the logged-in owner's shop dashboard
-// @access  Protected (Restaurant Owners Only)
+//Get the logged-in owner's shop dashboard
 router.get('/my-shop', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ ownerId: req.user.userId });
@@ -101,9 +95,7 @@ router.get('/my-shop', protect, authorize('restaurant_owner'), async (req, res) 
     }
 });
 
-// @route   GET /restaurants/:id/edit
-// @desc    Show shop edit form
-// @access  Protected (Restaurant Owners Only)
+//Show shop edit form
 router.get('/:id/edit', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ _id: req.params.id, ownerId: req.user.userId });
@@ -118,9 +110,7 @@ router.get('/:id/edit', protect, authorize('restaurant_owner'), async (req, res)
     }
 });
 
-// @route   POST /restaurants/:id/update
-// @desc    Update shop. If Name or Location changes, triggers Re-Approval lockdown.
-// @access  Protected (Restaurant Owners Only)
+//Update shop. If Name or Location changes, triggers Re-Approval lockdown.
 router.post('/:id/update', protect, authorize('restaurant_owner'), upload.single('logo'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ _id: req.params.id, ownerId: req.user.userId });
@@ -161,7 +151,6 @@ router.post('/:id/update', protect, authorize('restaurant_owner'), upload.single
             const targetPath = path.join(targetDir, req.file.filename);
             fs.renameSync(req.file.path, targetPath);
             shop.logoUrl = `/${targetPath.replace(/\\/g, '/')}`;
-            // Intentionally not setting requiresReapproval = true for logo update
         }
 
         // If a critical change happened, lock the shop down
@@ -186,9 +175,7 @@ router.post('/:id/update', protect, authorize('restaurant_owner'), upload.single
     }
 });
 
-// @route   POST /restaurants/:id/toggle-status
-// @desc    Switch between Open/Closed (Only works if Approved)
-// @access  Protected (Restaurant Owners Only)
+//Switch between Open/Closed (Only works if Approved)
 router.post('/:id/toggle-status', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ _id: req.params.id, ownerId: req.user.userId });
@@ -214,9 +201,7 @@ router.post('/:id/toggle-status', protect, authorize('restaurant_owner'), async 
     }
 });
 
-// @route   GET /restaurants/:restaurantId/menu
-// @desc    Public menu page for a specific restaurant
-// @access  Public
+//Public menu page for a specific restaurant
 router.get('/:restaurantId/menu', async (req, res) => {
     try {
         const restaurant = await Restaurant.findOne({

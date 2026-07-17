@@ -9,9 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const upload = require('../middleware/uploadMiddleware');
 
-// @route   POST /menu/add
-// @desc    Add a new food item WITH A PICTURE
-// @access  Protected (Restaurant Owners Only)
+//Add a new food item WITH A PICTURE
 router.post('/add', protect, authorize('restaurant_owner'), upload.single('image'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ ownerId: req.user.userId });
@@ -44,7 +42,7 @@ router.post('/add', protect, authorize('restaurant_owner'), upload.single('image
         });
 
         await newItem.save();
-        req.flash('success_msg', `"${name}" added to your menu!`);
+        req.flash('success_msg', `"${name}" added to your menu`);
         res.redirect('/restaurants/my-shop');
 
     } catch (error) {
@@ -54,9 +52,7 @@ router.post('/add', protect, authorize('restaurant_owner'), upload.single('image
     }
 });
 
-// @route   GET /menu/:id/edit
-// @desc    Show edit form for a specific item
-// @access  Protected (Restaurant Owners Only)
+//Show edit form for a specific item
 router.get('/:id/edit', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ ownerId: req.user.userId });
@@ -78,9 +74,7 @@ router.get('/:id/edit', protect, authorize('restaurant_owner'), async (req, res)
     }
 });
 
-// @route   POST /menu/:id/update
-// @desc    Update a specific menu item
-// @access  Protected (Restaurant Owners Only)
+//Update a specific menu item
 router.post('/:id/update', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ ownerId: req.user.userId });
@@ -113,9 +107,7 @@ router.post('/:id/update', protect, authorize('restaurant_owner'), async (req, r
     }
 });
 
-// @route   POST /menu/:id/toggle-availability
-// @desc    Toggle item availability on/off
-// @access  Protected (Restaurant Owners Only)
+//Toggle item availability on/off
 router.post('/:id/toggle-availability', protect, authorize('restaurant_owner'), async (req, res) => {
     try {
         const shop = await Restaurant.findOne({ ownerId: req.user.userId });
